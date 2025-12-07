@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>dq tranings</title>
+  <style>
+
+    
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #000;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+      padding: 12px 20px;
+      font-size: 14px;
+      background-color: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(15px);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    nav a {
+      color: #ffffff;
+      text-decoration: none;
+      padding: 6px 10px;
+      transition: opacity 0.2s ease;
+      cursor: pointer;
+    }
+
+    nav a:hover {
+      opacity: 0.8;
+    }
+
+    .curtain {
+      position: fixed;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(25px) saturate(1.2);
+      background: rgba(255, 255, 255, 0.15);
+      transition: top 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 2em;
+      text-shadow: 0 0 20px rgba(0,0,0,0.4);
+      z-index: 999;
+    }
+
+    .curtain.active {
+      top: 0;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 55px;
+      right: 50px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.4em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    }
+
+    .close-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.08);
+    }
+
+    .curtain button.action {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.25);
+      border: none;
+      border-radius: 12px;
+      font-size: 0.6em;
+      color: white;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: 0.3s;
+    }
+
+    .curtain button.action:hover {
+      background: rgba(255, 255, 255, 0.4);
+      transform: scale(1.05);
+    }
+
+    .info-block {
+      background: rgb(181, 99, 5);
+      color: #222;
+      padding: 60px 40px;
+      border-radius: 16px;
+      max-width: 1200px;
+      margin: 100vh auto 60px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .info-row.reverse {
+      flex-direction: row-reverse;
+    }
+
+    .info-text {
+      flex: 1;
+    }
+
+    .info-text h2 {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+
+    .info-text p {
+      font-size: 16px;
+      color: #ffffff;
+      line-height: 1.6;
+    }
+
+    .info-video {
+      flex: 1;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .info-video video {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .info-row {
+        flex-direction: column;
+      }
+      .info-row.reverse {
+        flex-direction: column;
+      }
+    }
+    
+    .container {
+      position: absolute;
+      top: 50vh;
+      left: 0;
+      width: 100%;
+      height: 260px;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .part {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0;
+    }
+
+    /* Левая картинка */
+    .left {
+      left: calc(50% - 260px);
+      width: 300px;
+      animation: flyLeft 1.5s ease-out forwards;
+    }
+
+    /* Правая картинка */
+    .right {
+      left: calc(50% + 20px);
+      width: 260px;
+      animation: flyRight 1.5s ease-out forwards;
+    }
+
+    @keyframes flyLeft {
+      from {
+        transform: translate(-150px, -50%);
+        opacity: 0;
+      }
+      to {
+        transform: translate(0, -50%);
+        opacity: 1;
+      }
+    }
+
+    @keyframes flyRight {
+      from {
+        transform: translate(150px, -50%);
+        opacity: 0;
+      }
+      to {
+        transform: translate(0, -50%);
+        opacity: 1;
+      }
+    }
+
+    /* ---- ИНФО БЛОК ---- */
+    .info-block {
+      background: rgb(181, 99, 5);
+      color: #222;
+      padding: 60px 40px;
+      border-radius: 16px;
+      max-width: 1200px;
+      margin: 100vh auto 60px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .info-row.reverse {
+      flex-direction: row-reverse;
+    }
+
+    .info-text {
+      flex: 1;
+    }
+
+    .info-text h2 {
+      font-size: 28px;
+      margin-bottom: 16px;
+      color: #000;
+    }
+
+    .info-text p {
+      font-size: 16px;
+      color: #ffffff;
+      line-height: 1.6;
+    }
+
+    .info-video {
+      flex: 1;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .info-video video {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+    }
+
+    /* ---- АДАПТИВ ПЛАНШЕТ ---- */
+    @media (max-width: 768px) {
+      .container {
+        height: 220px;
+      }
+
+      .left {
+        left: calc(50% - 150px);
+        width: 160px;
+      }
+
+      .right {
+        left: calc(50% + 10px);
+        width: 140px;
+      }
+
+      .info-row,
+      .info-row.reverse {
+        flex-direction: column;
+      }
+    }
+
+    /* ---- АДАПТИВ ТЕЛЕФОН ---- */
+    @media (max-width: 480px) {
+      .container {
+        height: 200px;
+      }
+
+      .left {
+        left: 8%;
+        width: 140px;
+      }
+
+      .right {
+        left: 52%;
+        width: 130px;
+      }
+    }
+
+    
+
+
+      
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="30431ae4-3501-4063-9748-17264cb10d47.png" class="part left">
+    <img src="0e22e3de-e27d-4bee-8724-d9576823637b.png" class="part right">
+  </div>
+  
+
+  
+
+  <nav id="navbar">
+    <a data-name="Тренировки" data-link="trenirovki.html">Тренировки</a>
+    <a data-name="Карты" data-link="maps.html">Карты</a>
+    <a data-name="Раскидки" data-link="raskidki.html">Раскидки</a>
+  </nav>
+
+  <div class="curtain" id="curtain">
+    <button class="close-btn" onclick="closeCurtain()">✖</button>
+    <p id="curtain-title">Меню</p>
+    <button class="action" id="moreBtn">Подробнее</button>
+  </div>
+
+
+  <div class="info-block">
+    <div class="info-row">
+      <div class="info-video">
+        <video src="smokes_vid2.webm" autoplay muted loop></video>
+      </div>
+      <div class="info-text">
+        <h2>Тренировка стрельбы</h2>
+        <p>Стрельба — основная часть геймплея в CS2. Всё остальное — второстепенное, ведь если ты не умеешь стрелять, тебя убьют с первой пули.</p>
+      </div>
+    </div>
+
+
+
+    <div class="info-row reverse">
+      <div class="info-video">
+        <video src="smokes_vid1.webm" autoplay muted loop></video>
+      </div>
+      <div class="info-text">
+        <h2>Тренировка раскида</h2>
+        <p>Гранаты — ключевой элемент в CS2. Они могут изменить исход раунда или заблокировать важные позиции для преимущества вашей команды.</p>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <script>
+    const curtain = document.getElementById('curtain');
+    const title = document.getElementById('curtain-title');
+    const navbar = document.getElementById('navbar');
+    const moreBtn = document.getElementById('moreBtn');
+
+    let currentLink = null;
+    let isHovered = false;
+
+    navbar.addEventListener('mouseover', (e) => {
+      if (e.target.tagName === 'A') {
+        const name = e.target.dataset.name;
+        const link = e.target.dataset.link;
+        currentLink = link;
+        title.textContent = name;
+        curtain.classList.add('active');
+      }
+    });
+
+    navbar.addEventListener('mouseleave', () => {
+      setTimeout(() => {
+        if (!isHovered) curtain.classList.remove('active');
+      }, 150);
+    });
+
+    curtain.addEventListener('mouseenter', () => isHovered = true);
+    curtain.addEventListener('mouseleave', () => {
+      isHovered = false;
+      curtain.classList.remove('active');
+    });
+
+    moreBtn.addEventListener('click', () => {
+      if (currentLink) {
+        window.location.href = currentLink;
+      }
+    });
+
+    function closeCurtain() {
+      curtain.classList.remove('active');
+      isHovered = false;
+    }
+  </script>
+</body>
+</html>
